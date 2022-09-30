@@ -1,11 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import logo from "./Graviti_Logo_1.png";
 import { useState } from "react";
 import "./FrontPage.css";
+import axios from "axios";
+// import { response } from "express";
 
 function FrontPage() {
   const [enteredOrigin, setEnteredOrigin] = useState("");
   const [enteredDestination, setEnteredDestination] = useState("");
+  // const [content, setcontent] = useState("")
+  const [dist, setdist] = useState("");
+  const [enteredOriginlat, setEnteredOriginlat] = useState("");
+  const [enteredOriginlong, setEnteredOriginlong] = useState("");
+  const [enteredDestinationlat, setEnteredDestinationlat] = useState("");
+  const [enteredDestinationlong, setEnteredDestinationlong] = useState("");
 
   const originChangeHandler = (event) => {
     setEnteredOrigin(event.target.value);
@@ -23,6 +31,116 @@ function FrontPage() {
     };
 
     console.log(place);
+  };
+
+  // // var src="https://www.google.com/maps/dir/?api=AIzaSyAolXVBph__8LXk-JukgnxDUI4LPDQAsxQ&origin="+{enteredOrigin}+"&destination="+{enteredDestination}+"&travelmode=driving"
+
+  // // var src1 = "https://www.google.com/maps/dir/?api=1&origin=Space+Needle+Seattle+WA&destination=Pike+Place+Market+Seattle+WA&travelmode=bicycling";
+  // const getlist1 = () => {
+  //   axios
+  //     .get("https://api.quotable.io/random")
+  //     .then((res) => {
+  //       console.log(res.data.content);
+  //       setcontent(res.data.content)
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // };
+  useEffect(() => {
+    // const getlocation = () => {
+    const options1 = {
+      method: "GET",
+      url: "https://forward-reverse-geocoding.p.rapidapi.com/v1/forward",
+      params: {
+        city: enteredOrigin,
+        "accept-language": "en",
+        polygon_threshold: "0.0",
+      },
+      headers: {
+        "X-RapidAPI-Key": process.env.REACT_APP_API_KEY1,
+        "X-RapidAPI-Host": "forward-reverse-geocoding.p.rapidapi.com",
+      },
+    };
+
+    axios
+      .request(options1)
+      .then(function (respons) {
+        // console.log(respons.data);
+        const ola = respons.data[0].lat;
+        const olo = respons.data[0].lon;
+        // console.log(respons.data[0].lat);
+        // console.log(enteredOriginlat);
+        setEnteredOriginlat(ola);
+        setEnteredOriginlong(olo);
+        // console.log(enteredOriginlat);
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+
+    const options2 = {
+      method: "GET",
+      url: "https://forward-reverse-geocoding.p.rapidapi.com/v1/forward",
+      params: {
+        city: enteredDestination,
+        "accept-language": "en",
+        polygon_threshold: "0.0",
+      },
+      headers: {
+        "X-RapidAPI-Key": process.env.REACT_APP_API_KEY1,
+        "X-RapidAPI-Host": "forward-reverse-geocoding.p.rapidapi.com",
+      },
+    };
+
+    axios
+      .request(options2)
+      .then(function (respon) {
+        // console.log(respon.data);
+        const dla = respon.data[0].lat;
+        const dlo = respon.data[0].lon;
+        setEnteredDestinationlat(dla);
+        setEnteredDestinationlong(dlo);
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+    // };
+  }, [
+    enteredOriginlat,
+    enteredDestination,
+    enteredOrigin,
+    enteredOriginlong,
+    enteredDestinationlat,
+    enteredDestinationlong,
+  ]);
+
+  const getdistance = () => {
+    const options = {
+      method: "GET",
+      url: "https://distance-calculator8.p.rapidapi.com/calc",
+      params: {
+        startLatitude: enteredOriginlat,
+        startLongitude: enteredOriginlong,
+        endLatitude: enteredDestinationlat,
+        endLongitude: enteredDestinationlong,
+      },
+      headers: {
+        "X-RapidAPI-Key": process.env.REACT_APP_API_KEY1,
+        "X-RapidAPI-Host": "distance-calculator8.p.rapidapi.com",
+      },
+    };
+
+    axios
+      .request(options)
+      .then(function (response) {
+        // console.log(response.data);
+        setdist(response.data.body.distance.kilometers);
+      })
+      .catch(function (error) {
+        console.error(error);
+        // console.log(enteredOriginlat);
+      });
   };
 
   return (
@@ -52,7 +170,11 @@ function FrontPage() {
                       ></input>
                     </div>
                     <div className="text1">
-                      <button type="submit" className=" btn btnn1">
+                      <button
+                        type="submit"
+                        className=" btn btnn1"
+                        onClick={getdistance}
+                      >
                         Calculate
                       </button>
                     </div>
@@ -73,17 +195,17 @@ function FrontPage() {
               <div className="col-sm-9 container">
                 <div className="bg row" style={{ border: "1px solid #E9EEF2" }}>
                   <div className="col">Distance</div>
-                  <div className="col text-end ">1234</div>
+                  <div className="col text-end "><b>{parseFloat(dist).toFixed(2)} Km</b></div>
                 </div>
                 <div className="row">
                   <p className="ta border">
                     The distance between <b>{enteredOrigin}</b> and{" "}
-                    <b>{enteredDestination}</b> is 1234
+                    <b>{enteredDestination}</b> is <b>{parseFloat(dist).toFixed(2)} Km</b>
                   </p>
                 </div>
               </div>
             </div>
-            <div className=" col-l-6 col-md-6 col-sm-12">hi</div>
+            <div className=" col-l-6 col-md-6 col-sm-12"><b>{parseFloat(dist).toFixed(2)} Km</b></div>
           </div>
         </div>
       </div>
