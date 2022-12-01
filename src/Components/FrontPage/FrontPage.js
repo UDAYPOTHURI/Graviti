@@ -48,6 +48,7 @@ function FrontPage() {
   //     });
   // };
   useEffect(() => {
+    // const identifier = setTimeout(() => {
     // const getlocation = () => {
     const options1 = {
       method: "GET",
@@ -105,6 +106,11 @@ function FrontPage() {
       .catch(function (error) {
         console.error(error);
       });
+    // }, 500);
+    // return () => {
+    //   console.log('hi');
+    //   clearTimeout(identifier);
+    // };
     // };
   }, [
     enteredOriginlat,
@@ -113,6 +119,7 @@ function FrontPage() {
     enteredOriginlong,
     enteredDestinationlat,
     enteredDestinationlong,
+    dist,
   ]);
 
   const getdistance = () => {
@@ -195,17 +202,22 @@ function FrontPage() {
               <div className="col-sm-9 container">
                 <div className="bg row" style={{ border: "1px solid #E9EEF2" }}>
                   <div className="col">Distance</div>
-                  <div className="col text-end "><b>{parseFloat(dist).toFixed(2)} Km</b></div>
+                  <div className="col text-end ">
+                    <b>{parseFloat(dist).toFixed(2)} Km</b>
+                  </div>
                 </div>
                 <div className="row">
                   <p className="ta border">
                     The distance between <b>{enteredOrigin}</b> and{" "}
-                    <b>{enteredDestination}</b> is <b>{parseFloat(dist).toFixed(2)} Km</b>
+                    <b>{enteredDestination}</b> is{" "}
+                    <b>{parseFloat(dist).toFixed(2)} Km</b>
                   </p>
                 </div>
               </div>
             </div>
-            <div className=" col-l-6 col-md-6 col-sm-12"><b>{parseFloat(dist).toFixed(2)} Km</b></div>
+            <div className=" col-l-6 col-md-6 col-sm-12">
+              <b>{parseFloat(dist).toFixed(2)} Km</b>
+            </div>
           </div>
         </div>
       </div>
